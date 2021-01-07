@@ -15,6 +15,7 @@
 #include "nokia5110.c"
 #include "usart.h"
 
+//Macros holding values of musical notes
 #define c_n 261.626
 #define c_s 277.183
 #define d_n 293.665
@@ -209,8 +210,6 @@ void set_PWM(double frequency) {
 	}
 }
 
-
-
 void PWM_on() {
 	TCCR3A = (1 << COM3A0);
 
@@ -222,13 +221,10 @@ void PWM_on() {
 	set_PWM(0);
 }
 
-
-
 void PWM_off() {
 	TCCR3A = 0x00;
 	TCCR3B = 0x00;
 }
-
 
 //Function that draws a cursor character
 void drawCursor(int x, int y, int e){
@@ -939,65 +935,38 @@ int G_tick(int state) {
 //}
 
 int main(void){
+	//Initiate Ports
 	PORTA = 0xFF; DDRA = 0x00;
 	PORTB = 0x00; DDRB = 0xFF;
 	PORTD = 0xFF; DDRD = 0x00;
+
+	const short TASK_SIZE = 3;
 	
-	// Period for the tasks
-	unsigned long int SMTick1_calc = 100;
-	unsigned long int SMTick2_calc = 250;
-	unsigned long int SMTick3_calc = 50;
-	//unsigned long int SMTick4_calc = 10;
+	//Periods and functions for each task
+	unsigned long int SMTickLengths[TASK_SIZE] = {100, 250, 50};
+	int (*TickFct)(int) SMTickFunctions[TASK_SIZE] = {&M_tick, &D_tick, &G_tick};
 	
 	//Calculating GCD
-	unsigned long int tmpGCD = 1;
-	tmpGCD = findGCD(SMTick1_calc, SMTick2_calc);
-	tmpGCD = findGCD(tmpGCD, SMTick3_calc);
-	//tmpGCD = findGCD(tmpGCD, SMTick4_calc);
-	
-	//Greatest common divisor for all tasks or smallest time unit for tasks.
-	unsigned long int GCD = tmpGCD;
+	unsigned long int GCD = 1000;
+	for(int i = 0; i < TASK_SIZE; i++){
+		GCD = findGCD(tempGCD, SMTickLengths[i]);
+	}
 
-	//Recalculate GCD periods for scheduler
-	unsigned long int SMTick1_period = SMTick1_calc/GCD;
-	unsigned long int SMTick2_period = SMTick2_calc/GCD;
-	unsigned long int SMTick3_period = SMTick3_calc/GCD;
-	//unsigned long int SMTick4_period = SMTick4_calc/GCD;
-	
 	//Declare an array of tasks
 	static task task1, task2, task3;
 	task *tasks[] = { &task1, &task2, &task3};
-	const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
-	
-	// Task 1
-	task1.state = -1;//Task initial state.
-	task1.period = SMTick1_period;//Task Period.
-	task1.elapsedTime = SMTick1_period;//Task current elapsed time.
-	task1.TickFct = &M_tick;//Function pointer for the tick.
 
-	// Task 2
-	task2.state = -1;//Task initial state.
-	task2.period = SMTick2_period;//Task Period.
-	task2.elapsedTime = SMTick2_period;//Task current elapsed time.
-	task2.TickFct = &D_tick;//Function pointer for the tick.
-
-	// Task 3
-	task3.state = -1;//Task initial state.
-	task3.period = SMTick3_period;//Task Period.
-	task3.elapsedTime = SMTick3_period; // Task current elasped time.
-	task3.TickFct = &G_tick; // Function pointer for the tick.
-
-	//// Task 4
-	//task4.state = -1;//Task initial state.
-	//task4.period = SMTick4_period;//Task Period.
-	//task4.elapsedTime = SMTick4_period; // Task current elasped time.
-	//task4.TickFct = &SW_tick; // Function pointer for the tick.
+	for(int i = 0; i < TASK_SIZE; i++){
+		unsigned long int SMTickPeriod = SMTickLengths[i] / GCD;
+		task[i].state = -1;
+		task[i].period = SMTickPeriod;
+		task[i].elapsedTime = SMTickPeriod;
+		task[i].TickFct = SMTickFunctions[i];
+	}
 	
 	// Set the timer and turn it on
 	TimerSet(GCD);
 	TimerOn();
-	
-	//set_PWM(notes3[0]);
 	
 	initUSART(0);
 	
@@ -1007,7 +976,7 @@ int main(void){
 	unsigned short i; // Scheduler for-loop iterator
 	while(1) {
 		// Scheduler code
-		for ( i = 0; i < numTasks; i++ ) {
+		for ( i = 0; i < TASK_SIZE; i++ ) {
 			// Task is ready to tick
 			if ( tasks[i]->elapsedTime == tasks[i]->period ) {
 				// Setting next state for task
