@@ -943,13 +943,13 @@ int main(void){
 	const short TASK_SIZE = 3;
 	
 	//Periods and functions for each task
-	unsigned long int SMTickLengths[TASK_SIZE] = {100, 250, 50};
-	int (*TickFct)(int) SMTickFunctions[TASK_SIZE] = {&M_tick, &D_tick, &G_tick};
+	unsigned long int SMTickLengths[] = {100, 250, 50};
+	int (*SMTickFunctions[])(int) = {&M_tick, &D_tick, &G_tick};
 	
 	//Calculating GCD
 	unsigned long int GCD = 1000;
 	for(int i = 0; i < TASK_SIZE; i++){
-		GCD = findGCD(tempGCD, SMTickLengths[i]);
+		GCD = findGCD(GCD, SMTickLengths[i]);
 	}
 
 	//Declare an array of tasks
@@ -958,10 +958,10 @@ int main(void){
 
 	for(int i = 0; i < TASK_SIZE; i++){
 		unsigned long int SMTickPeriod = SMTickLengths[i] / GCD;
-		task[i].state = -1;
-		task[i].period = SMTickPeriod;
-		task[i].elapsedTime = SMTickPeriod;
-		task[i].TickFct = SMTickFunctions[i];
+		tasks[i]->state = -1;
+		tasks[i]->period = SMTickPeriod;
+		tasks[i]->elapsedTime = SMTickPeriod;
+		tasks[i]->TickFct = SMTickFunctions[i];
 	}
 	
 	// Set the timer and turn it on
