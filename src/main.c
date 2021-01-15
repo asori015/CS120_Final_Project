@@ -35,77 +35,27 @@ volatile unsigned char TimerFlag = 0; // TimerISR() sets this to 1. C programmer
 unsigned long _avr_timer_M = 1; // Start count from here, down to 0. Default 1 ms.
 unsigned long _avr_timer_cntcurr = 0; // Current internal count of 1ms ticks
 
-//32 secs
-//double notes1[] = {g, c * 2, g, c, g, c * 2, g, g, c * 2, g, c * 2, e_n * 2, d * 2, c * 2, b, a, g_s, g, c * 2, g, c, g, c * 2, g, f * 2, d * 2, c * 2, a_s, a, g, f};
-//
-//double tempo1[] = {500, 500, 500, 500, 500, 500, 1000, 500, 500, 500, 500, 370, 130, 120, 130, 120, 130, 500, 500, 500, 500, 500, 500, 1000, 500, 500, 500, 500, 500, 500, 1000};
-	
 const unsigned char ARRAY_SIZE1 = 31;
-
-//64 secs
-//double notes2[] = {e_n, d_s, a_s, f, e_n, d_s, a_s, f, e_n, d_s, a_s, f, e_n, d_s, a_s, f,
-				   //e_n, d_s, a_s, f, e_n, d_s, a_s, f, e_n, d_s, a_s, f, e_n, d_s, a_s, f,
-				   //e_n, d_s, a_s, f, e_n, d_s, a_s, f, e_n, d_s, a_s, f, e_n, d_s, a_s, f,
-				   //e_n, d_s, a_s, f, e_n, d_s, a_s, f, e_n, d_s, a_s, f, e_n, d_s, a_s, f};
-//
-//double tempo2[] = {1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
-				   //1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
-				   //1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
-				   //1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000};
 
 const unsigned char ARRAY_SIZE2 = 64;
 
-//64 secs
-//double notes3[] = {b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, e_n * 2,
-				   //z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, d * 2,
-				   //z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, a, z,
-				   //b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, e_n * 2,
-				   //z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, d * 2,
-				   //z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, a, z,
-				   //b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, e_n * 2,
-				   //z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, d * 2,
-				   //z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, a, z,
-				   //b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, b, z, e_n * 2,
-				   //z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, e_n * 2, z, d * 2,
-				   //z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, d * 2, z, a, z};
-				   //
-//short tempo3[] = {60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-				  //60, 60, 120, 120, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 60, 60,
-				  //60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 120, 120,
-				  //60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-				  //60, 60, 120, 120, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 60, 60,
-				  //60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 120, 120,
-				  //60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-				  //60, 60, 120, 120, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 60, 60,
-				  //60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 120, 120,
-				  //60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-				  //60, 60, 120, 120, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 60, 60,
-				  //60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 120, 120, 120, 120};
-
 const unsigned char ARRAY_SIZE3 = 320;
 
-unsigned short song1[][4] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
-							 {0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,0,0}};
-								
+//This is how levels in the game are represented; TODO: Use hex vals to represent levels - more efficient.
+//Also gotta refactor to allow adding more songs in the future easier.
 const unsigned char SONG_SIZE1 = 13;
+unsigned short song1[][4] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
+							 {0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,0,0}};					
 
-//unsigned short song1[][4] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},
-							 //{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,1,0},{0,1,0,0},
-							 //{0,0,0,1},{1,0,0,0},{0,1,0,0},{0,1,0,0},{0,0,1,0},{0,0,1,0},{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},
-							 //{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,1,0},{0,1,0,0},{0,0,0,1},{1,0,0,0},{0,1,0,0},{0,1,0,0},
-							 //{0,0,1,0},{0,0,1,0},{0,0,0,0}};
-								 
+const unsigned char SONG_SIZE2 = 36;						 
 unsigned short song2[][4] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
 							 {0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,1,0},{0,1,0,0},
 							 {0,0,0,1},{1,0,0,0},{0,1,0,0},{0,1,0,0},{0,0,1,0},{0,0,1,0},{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},
 							 {0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0},{0,0,1,0},{0,1,0,0},{0,0,0,1},{1,0,0,0},{0,1,0,0},{0,1,0,0},
 							 {0,0,1,0},{0,0,1,0},{0,0,0,0}};
-								 
-const unsigned char SONG_SIZE2 = 36;
-
-unsigned short song3[][4] = {{0,1,0,1},{1,0,1,0},{0,1,0,1},{1,0,1,0},{0,0,0,1},{0,0,1,1},{1,0,0,0},{1,1,0,0}};
-	
+						 
 const unsigned char SONG_SIZE3 = 8;
+unsigned short song3[][4] = {{0,1,0,1},{1,0,1,0},{0,1,0,1},{1,0,1,0},{0,0,0,1},{0,0,1,1},{1,0,0,0},{1,1,0,0}};
 
 unsigned char i, j, k, l, m_press, m_return, m_reset_done, game, song, reset;
 unsigned char up, down, left, right, time;
@@ -241,33 +191,33 @@ void drawCursor(int x, int y, int e){
 
 enum M_States{M_Init, M_Wait, M_Press, M_Start, M_Menu, M_Game, M_Score, M_Reset, M_HighScore} M_State;
 
-int M_tick(int state) {
+int NokiaMenuDisplay_TickF(int state) {
 	switch(M_State){
 		case M_Init:
-		M_State = M_Wait;
 		i = 0;
 		song = 0;
 		game = 0;
 		m_press = 0;
 		nokia_lcd_clear();
-		nokia_lcd_write_string("Press any",1);
+		nokia_lcd_write_string("Press any", 1);
 		nokia_lcd_set_cursor(0, 8);
-		nokia_lcd_write_string("button to",1);
+		nokia_lcd_write_string("button to", 1);
 		nokia_lcd_set_cursor(0, 16);
-		nokia_lcd_write_string("start the game",1);
+		nokia_lcd_write_string("start the game", 1);
 		nokia_lcd_render();
 		eeprom_write_byte(0,10);
 		eeprom_write_byte(1,0);
+		M_State = M_Wait;
 		break;
 		
 		case M_Wait:
 		if(~PINA & 0x1E){
-			M_State = M_Press;
 			m_press = 2;
 			nokia_lcd_clear();
-			nokia_lcd_write_string(" Dance Dance   Revolution!",1);
+			nokia_lcd_write_string(" Dance Dance   Revolution!", 1);
 			nokia_lcd_render();
 			song = 3;
+			M_State = M_Press;
 		}
 		else{
 			M_State = M_Wait;
@@ -701,7 +651,10 @@ int M_tick(int state) {
 }
 
 enum D_States{D_Wait, D_Generate, D_Reset} D_State;
-	
+
+//State machine responsible for setting global direction flags to
+//the selected song step. Active only when the player starts a level.
+//Communicates with Arduino via USART to pause, stop or continue the level.
 int D_tick(int state) {
 	switch(D_State){
 		case D_Wait:
@@ -771,7 +724,11 @@ int D_tick(int state) {
 }
 
 enum G_States{G_Wait, G_Play, G_Press, G_Reset} G_State;
-	
+
+//Records user input while a game level is playing. If a button
+//press is detected while an "arrow" is at the bottom of the board
+//(represented by up down left right global flags), score is incremented
+//and corresponding flag is set to 0.
 int G_tick(int state) {
 	switch(G_State){
 		case G_Wait:
@@ -846,94 +803,6 @@ int G_tick(int state) {
 	return state;
 }
 
-//enum SW_States{SW_Wait, SW_Play} SW_State;
-//
-//int SW_tick(int state) {
-	//switch(SW_State){
-		//case SW_Wait:
-		//if(song == 1){
-			//SW_State = SW_Play;
-			//l = 0;
-			//PWM_on();
-			//set_PWM(notes1[l]);
-		//}
-		//else if(song == 2){
-			//SW_State = SW_Play;
-			//l = 0;
-			//PWM_on();
-			//set_PWM(notes2[l]);
-		//}
-		//else if(song == 3){
-			//SW_State = SW_Play;
-			//l = 0;
-			//PWM_on();
-			//set_PWM(notes3[l]);
-		//}
-		//else{
-			//SW_State = SW_Wait;
-		//}
-		//break;
-		//
-		//case SW_Play:
-		//if(song == 1){
-			//if(l < ARRAY_SIZE1){
-				//SW_State = SW_Play;
-				//if(time < tempo1[l]){
-					//time += 1;
-				//}
-				//else{
-					//l++;
-					//time = 0;
-					//set_PWM(notes1[l]);
-				//}
-			//}
-			//else{
-				//SW_State = SW_Wait;
-				//PWM_off();
-			//}
-		//}
-		//else if(song == 2){
-			//if(l < ARRAY_SIZE2){
-				//SW_State = SW_Play;
-				//if(time < tempo2[l]){
-					//time += 1;
-				//}
-				//else{
-					//l++;
-					//time = 0;
-					//set_PWM(notes2[l]);
-				//}
-			//}
-			//else{
-				//SW_State = SW_Wait;
-				//PWM_off();
-			//}
-		//}
-		//else if (song == 3){
-			//if(l < ARRAY_SIZE3){
-				//SW_State = SW_Play;
-				//if(time < tempo3[l]){
-					//time += 1;
-				//}
-				//else{
-					//l++;
-					//time = 0;
-					//set_PWM(notes3[l]);
-				//}
-			//}
-			//else{
-				//SW_State = SW_Wait;
-				//PWM_off();
-			//}
-		//}
-		//break;
-		//
-		//default:
-		//break;
-	//}
-	//return state;
-//}
-
 int main(void){
 	//Initiate Ports
 	PORTA = 0xFF; DDRA = 0x00;
@@ -944,7 +813,7 @@ int main(void){
 	
 	//Periods and functions for each task
 	unsigned long int SMTickLengths[] = {100, 250, 50};
-	int (*SMTickFunctions[])(int) = {&M_tick, &D_tick, &G_tick};
+	int (*SMTickFunctions[])(int) = {&NokiaMenuDisplay_TickF, &D_tick, &G_tick};
 	
 	//Calculating GCD
 	unsigned long int GCD = 1000;
